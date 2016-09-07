@@ -1,0 +1,914 @@
+" vimrc
+
+"" Key Map
+"" Leader -> \
+"" <Esc><Esc> nohlsearch
+"" <Leader>f [unite]
+""    [unite]b Unite bookmark
+""    [unite]f Unite file
+""    [unite]m Unite file_mru
+"" <Leader>r (quickrun)
+"" <Leader>o :OverCommandLine
+"" <Leader>u :UndotreeToggle
+"" <Leader>N :NERDTreeToggle
+"" <Leader>E :srcexpl
+"" <leader>T :TagbarToggle
+"" <Leader>A : NERD + SRCEXPL + TAGBAR
+"" <ENTER> wildfire_fuel_map
+"" S <Plug>(easymotion-sn)
+"" <Leader>f <Plug>(easymotion-bd-W)
+"" <Leader>x [ref]
+""    [ref]j :Ref webdict je
+""    [ref]e :Ref webdict ej
+""    [ref]w :Ref webdict wikipedia
+""    [ref]m :Ref man
+""
+""
+"" :Doxy
+"" :GrammerCheck
+"" :tj -> TranslateGoogleCmdYank
+""
+""
+"" Requst
+"" w3m
+"" lynx
+"" clang-format
+"" clang
+""
+""
+""
+""
+"
+" Flags {{{
+let s:use_dein = 1
+" }}}
+
+" vi compatibility {{{
+if !&compatible
+  " Disable vi compatible mode (much better!)
+  " Necessary for dein.vim
+  set nocompatible
+endif
+" }}}
+
+" Prepare .vim dir {{{
+let s:vimdir = $HOME . "/.vim"
+if has("vim_starting")
+  if ! isdirectory(s:vimdir)
+    call system("mkdir " . s:vimdir)
+  endif
+endif
+" }}}
+
+" dein {{{
+let s:dein_enabled  = 0
+if s:use_dein && v:version >= 704
+  let s:dein_enabled = 1
+
+  " Set dein paths
+  let s:dein_dir = s:vimdir . '/dein'
+  let s:dein_github = s:dein_dir . '/repos/github.com'
+  let s:dein_repo_name = "Shougo/dein.vim"
+  let s:dein_repo_dir = s:dein_github . '/' . s:dein_repo_name
+
+  " Check dein has been installed or not.
+  if !isdirectory(s:dein_repo_dir)
+    echo "dein is not installed, install now "
+    let s:dein_repo = "https://github.com/" . s:dein_repo_name
+    echo "git clone " . s:dein_repo . " " . s:dein_repo_dir
+    call system("git clone " . s:dein_repo . " " . s:dein_repo_dir)
+  endif
+  let &runtimepath = &runtimepath . "," . s:dein_repo_dir
+
+  " Begin plugin part {{{
+
+  " Check cache
+  if dein#load_state(s:dein_dir)
+    call dein#begin(s:dein_dir)
+
+    " dein
+    call dein#add('Shougo/dein.vim')
+
+    " Sub mode
+    call dein#add('kana/vim-submode')
+
+    " neocomplete
+    if has('lua')
+      call dein#add('Shougo/neocomplete.vim', {
+        \ 'on_i': 1,
+        \ 'lazy': 1})
+      call dein#add('ujihisa/neco-look', {
+        \ 'depends': ['neocomplete.vim']})
+    endif
+
+    " Snippet
+    call dein#add('Shougo/neosnippet')
+    call dein#add('Shougo/neosnippet-snippets', {'depdens': ['neosnippet']})
+    call dein#add('honza/vim-snippets', {'depdens': ['neosnippet']})
+    call dein#add('rcmdnk/vim-octopress-snippets', {'depdens': ['neosnippet']})
+
+    " vimproc
+    call dein#add('Shougo/vimproc', {'build': 'make'})
+
+    " unite
+    call dein#add('Shougo/unite.vim')
+    call dein#add('ujihisa/unite-colorscheme', {'dpdens': ['unite.vim']})
+    call dein#add('osyo-manga/unite-quickrun_config', {'dpdens': ['unite.vim']})
+    call dein#add('osyo-manga/unite-quickfix', {'dpdens': ['unite.vim']})
+
+    " quickrun
+    call dein#add('thinca/vim-quickrun')
+    call dein#add('osyo-manga/shabadou.vim')
+
+    " C famliy
+    call dein#add('osyo-manga/vim-cpp-syntax-reserved_identifiers')
+    call dein#add('Shougo/neoinclude.vim')
+    call dein#add('justmao945/vim-clang')
+
+    " 共通
+    call dein#add('scrooloose/syntastic')
+    call dein#add('Yggdroot/indentLine')
+    call dein#add('mrtazz/DoxygenToolkit.vim')
+    call dein#add('itchyny/vim-cursorword')
+
+    " 操作
+    call dein#add('osyo-manga/vim-over')
+    call dein#add('tomtom/tcomment_vim.git')
+    call dein#add('mbbill/undotree')
+    call dein#add('vim-scripts/bufferlist.vim')
+    call dein#add('bling/vim-bufferline')
+    call dein#add('Konfekt/FastFold')
+
+    " The NERD Tree: File Explorer
+    call dein#add('scrooloose/nerdtree', {
+            \ 'on_cmd': ['NERDTreeToggle'],
+            \ 'lazy': 1})
+
+    " Source Explorer
+    call dein#add('wesleyche/SrcExpl', {
+          \ 'on_cmd': ['SrcExplToggle'],
+          \ 'lazy': 1})
+
+    " For Tags
+    call dein#add('majutsushi/tagbar', {
+          \ 'on_cmd': ['TagbarToggle'],
+          \ 'lazy': 1})
+
+    call dein#add('soramugi/auto-ctags.vim')
+
+    " Status line
+    call dein#add('itchyny/lightline.vim')
+
+    " OpenGL
+    call dein#add('Eraden/glfw.vim')
+    call dein#add('tikhomirov/vim-glsl')
+    call dein#add('beyondmarc/opengl.vim')
+
+    " shell
+    call dein#add('Shougo/vimshell.vim')
+
+    call dein#add('osyo-manga/vim-anzu')
+
+    " incsearch
+    call dein#add('haya14busa/incsearch.vim')
+
+
+    call dein#add('othree/html5.vim')
+    call dein#add('hail2u/vim-css3-syntax')
+    call dein#add('jelera/vim-javascript-syntax')
+
+    " wildfire
+    call dein#add("gcmt/wildfire.vim")
+
+    " Easymotion
+    call dein#add('easymotion/vim-easymotion', {
+      \ 'on_map': ['<Plug>(easymotion-sn)', '<Plug>(easymotion-bd-W)',
+      \            '<Plug>(easymotion-bd-w)'],
+      \ 'lazy': 1})
+
+    " grammer check
+    call dein#add('rhysd/vim-grammarous', {
+      \ 'on_cmd': ['GrammarousCheck'],
+      \ 'lazy': 1})
+
+    " Google Translate
+    call dein#add('daisuzu/translategoogle.vim', {
+        \ 'on_cmd': ['TranslateGoogle', 'TranslateGoogleCmd'],
+        \ 'lazy': 1})
+
+    " vim-ref
+    call dein#add('thinca/vim-ref', {
+          \ 'on_cmd': ['Ref'],
+          \ 'lazy': 1})
+
+    " benchmark
+    call dein#add('mattn/benchvimrc-vim', {
+      \ 'on_cmd': ['BenchVimrc'],
+      \ 'lazy': 1})
+
+    "edkolev/tmuxline.vim
+    call dein#add('edkolev/tmuxline.vim')
+
+    call dein#end()
+
+    call dein#save_state()
+  endif
+
+  " }}} dein end
+
+  " Installation check.
+  if dein#check_install()
+    call dein#install()
+  endif
+endif
+" }}} dein
+
+" Basic settings {{{
+
+"release autogroup in MyAutoCmd
+augroup MyAutoCmd
+  autocmd!
+augroup END
+
+"######################
+"encode
+"######################
+set enc=utf-8
+set helplang=ja
+set fileencodings=utf-8,iso-2022-jp,cp932,euc-jp,default,latin
+syntax on
+
+"######################
+"display
+"######################
+set number "line number
+let &titleold=expand("%:p:h")
+set title
+set showmode
+set title
+set ruler
+set showcmd
+set matchtime=3
+set laststatus=2
+set background=dark
+
+"######################
+"for Programming
+"######################
+set infercase "補完時に大文字小文字を区別しない
+set backspace=indent,eol,start
+set nocompatible
+set smartindent
+set autoindent
+set expandtab
+set tabstop=2
+set shiftwidth=2 "自動インデントでずれる幅
+set softtabstop=2
+set whichwrap=b,s,h,l,<,>,[,] "行頭行末の左右移動で行をまたぐ
+set scrolloff=8                "上下8行の視界を確保
+set sidescrolloff=16           " 左右スクロール時の視界を確保
+set sidescroll=1               " 左右スクロールは一文字づつ行う
+set cursorline     " カーソル行の背景色を変える
+set showmatch      " 対応する括弧を強調表示
+set matchtime=3
+set novisualbell
+" 不可視文字の表示記号指定
+set list
+set listchars=tab:>.,trail:_,eol:↲,extends:>,precedes:<,nbsp:%
+set confirm "保存されていないファイルがあるときは終了前に保存確認
+set hlsearch "検索文字列をハイライトする
+set ignorecase "大文字と小文字を区別しない
+set smartcase "大文字と小文字が混在した言葉で検索を行った場合に限り、大文字と小文字を区別する
+set wrapscan "最後尾まで検索を終えたら次の検索で先頭に移る
+set wildmenu wildmode=list:longest,full
+
+" ##########################
+" nohlsearch
+"######################
+nmap <silent> <Esc><Esc> :nohlsearch<CR>
+
+" ##########################
+" 前回編集していた場所にカーソルを移動させる
+"######################
+au BufWritePost * mkview
+autocmd BufReadPost * loadview
+
+"######################
+" 全角スペースの表示
+"######################
+function! ZenkakuSpace()
+  highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
+endfunction
+
+if has('syntax')
+  augroup ZenkakuSpace
+    autocmd!
+    autocmd ColorScheme * call ZenkakuSpace()
+    autocmd VimEnter,WinEnter,BufRead * let w:m1=matchadd('ZenkakuSpace', '　')
+  augroup END
+  call ZenkakuSpace()
+endif
+
+"##################
+"include guard
+"###################"
+command!  -nargs=0 IncGuard call IncludeGuard()
+function! IncludeGuard()
+  "カレントファイル名を取得
+  let name = fnamemodify(expand('%'),':t')
+
+  "大文字にする
+  let name = toupper(name)
+
+  "がーど
+  let included = substitute(name,'\.','_','g').'_INCLUDED__'
+
+  "書き込み
+  let res_head = '#ifndef '.included."\n#define ".included."\n\n"
+  let res_foot = "\n".'#endif //'.included."\n"
+  silent! execute '1s/^/\=res_head'
+  silent! execute '$s/$/\=res_foot'
+endfunction
+
+"#######################
+"　移動コマンドremap
+"######################
+nnoremap s <Nop>
+nnoremap sj <C-w>j
+nnoremap sk <C-w>k
+nnoremap sl <C-w>l
+nnoremap sh <C-w>h
+nnoremap sJ <C-w>J
+nnoremap sK <C-w>K
+nnoremap sL <C-w>L
+nnoremap sH <C-w>H
+nnoremap sn gt
+nnoremap sp gT
+nnoremap sr <C-w>r
+nnoremap s= <C-w>=
+nnoremap sw <C-w>w
+nnoremap so <C-w>_<C-w>|
+nnoremap sO <C-w>=
+nnoremap sN :<C-u>bn<CR>
+nnoremap sP :<C-u>bp<CR>
+nnoremap st :<C-u>tabnew<CR>
+nnoremap ss :<C-u>sp<CR>
+nnoremap sv :<C-u>vs<CR>
+nnoremap sq :<C-u>q<CR>
+nnoremap sQ :<C-u>bd<CR>
+
+" Open vimrc
+nnoremap <Leader><Leader> :tabedit $MYVIMRC<CR>
+
+" Source vimrc
+nnoremap <Leader>. :source $MYVIMRC<CR>
+
+" }}} Basic settings
+
+" Plugin settings {{{
+
+" sub mode {{{
+if s:dein_enabled && dein#tap("vim-submode")
+  call submode#enter_with('bufmove', 'n', '', 's>', '<C-w>>')
+  call submode#enter_with('bufmove', 'n', '', 's<', '<C-w><')
+  call submode#enter_with('bufmove', 'n', '', 's+', '<C-w>+')
+  call submode#enter_with('bufmove', 'n', '', 's-', '<C-w>-')
+  call submode#map('bufmove', 'n', '', '>', '<C-w>>')
+  call submode#map('bufmove', 'n', '', '<', '<C-w><')
+  call submode#map('bufmove', 'n', '', '+', '<C-w>+')
+  call submode#map('bufmove', 'n', '', '-', '<C-w>-')
+endif
+" }}} sub mode
+
+" neocomplete {{{
+if s:dein_enabled && dein#tap("neocomplete.vim")
+
+  let g:neocomplete#enable_at_startup = 1
+  let g:neocomplete#enable_smart_case = 1
+  let g:neocomplete#enable_underbar_completion = 1
+  let g:neocomplete#enable_camel_case_completion  =  1
+  let g:neocomplete#max_list = 20
+  let g:neocomplete#sources#syntax#min_keyword_length = 3
+  let g:neocomplete#auto_completion_start_length = 2
+  let g:neocomplete#enable_auto_close_preview = 0
+  "let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+
+  " text mode is necessary for look
+   " But it is not useful for code writing because it convert like:
+   " NeoBundle to Neobundle.
+   let g:neocomplete#text_mode_filetypes =
+         \ {'hybrid': 1, 'text':1, 'help': 1, 'gitcommit': 1, 'gitrebase':1,
+         \  'vcs-commit': 1, 'markdown':1, 'textile':1, 'creole':1, 'org':1,
+         \  'rdoc':1, 'mediawiki':1, 'rst':1, 'asciidoc':1, 'prod':1,
+         \  'plaintex':1, 'md': 1, 'html': 1,
+         \  'vim':1, 'sh':1, 'javascript':0, 'perl':0}
+
+  let g:neocomplete#sources#dictionary#dictionaries = {
+              \ 'default'  : '',
+              \ 'vimshell' : '~/.vimshell_hist',
+              \ 'scheme'   : '~/.gosh_completions'
+              \ }
+
+  if !exists('g:neocomplete#keyword_patterns')
+    let g:neocomplete#keyword_patterns = {}
+  endif
+  let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+  inoremap <expr><C-g>     neocomplete#undo_completion()
+  inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+  inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+  function! s:my_cr_function()
+    return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+  endfunction
+
+  inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+
+  inoremap <expr><C-h>  neocomplete#smart_close_popup()."\<C-h>"
+  inoremap <expr><BS>   neocomplete#smart_close_popup()."\<C-h>"
+  inoremap <expr><C-y>  neocomplete#close_popup()
+  inoremap <expr><C-e>  neocomplete#cancel_popup()
+
+  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+endif
+" }}} neocomplete
+
+" neosnippet {{{
+if s:dein_enabled && dein#tap("neosnippet")
+  " Plugin key-mappings.
+  imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+  smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+  xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+  " SuperTab like snippets behavior.
+  imap <expr><S-TAB> neosnippet#expandable_or_jumpable() ?
+        \ "\<Plug>(neosnippet_expand_or_jump)"
+        \: pumvisible() ? "\<C-n>" : "\<TAB>"
+  smap <expr><S-TAB> neosnippet#expandable_or_jumpable() ?
+        \ "\<Plug>(neosnippet_expand_or_jump)"
+        \: "\<TAB>"
+
+  " For snippet_complete marker.
+  if has('conceal')
+    set conceallevel=2 concealcursor=i
+  endif
+
+  let g:neosnippet#snippets_directory = []
+  if dein#tap("neosnippet-snippets")
+    let g:neosnippet#snippets_directory += [expand(s:dein_github . '/Shougo/neosnippet-snippets/neosnippets')]
+  endif
+  if dein#tap("vim-snippets")
+    let g:neosnippet#snippets_directory += [expand(s:dein_github . '/honza/vim-snippets/snippets')]
+  endif
+  if dein#tap("vim-octopress-snippets")
+    let g:neosnippet#snippets_directory += [expand(s:dein_github . '/rcmdnk/vim-octopress-snippets/neosnippets')]
+  endif
+endif
+" }}} neosnippet
+
+" unite {{{
+if s:dein_enabled && dein#tap("unite.vim")
+  nnoremap    [unite]   <Nop>
+  nmap    <Leader>f [unite]
+
+  nnoremap [unite]u  :<C-u>Unite -no-split<Space>
+  " nnoremap <silent> [unite]f :<C-u>Unite<Space>buffer<CR>
+  nnoremap <silent> [unite]b :<C-u>Unite<Space>bookmark<CR>
+  nnoremap <silent> [unite]f :<C-u>Unite<Space>file<CR>
+  nnoremap <silent> [unite]m :<C-u>Unite<Space>file_mru<CR>
+  " nnoremap <silent> [unite]o :<C-u>Unite<Space>outline<CR>
+  " nnoremap <silent> [unite]r :<C-u>UniteWithBufferDir file<CR>
+  nnoremap <silent> ,vr :UniteResume<CR>
+  let g:vinarise_enable_auto_detect = 1
+
+  nnoremap <silent> ,vb :Unite build<CR>
+  nnoremap <silent> ,vcb :Unite build:!<CR>
+  nnoremap <silent> ,vch :UniteBuildClearHighlight<CR>
+endif
+" }}} unite
+
+" quickrun {{{
+call dein#add('thinca/vim-quickrun')
+call dein#add('osyo-manga/unite-quickrun_config')
+call dein#add('osyo-manga/unite-quickfix')
+call dein#add('osyo-manga/shabadou.vim')
+if s:dein_enabled && dein#tap("vim-quickrun")
+
+  nmap <Leader>r <Plug>(quickrun)
+
+  let g:quickrun_config = {
+        \       "_" : {
+        \           "hook/close_unite_quickfix/enable_hook_loaded" : 1,
+        \           "hook/unite_quickfix/enable_failure" : 1,
+        \           "hook/close_quickfix/enable_exit" : 1,
+        \           "hook/close_buffer/enable_failure" : 1,
+        \           "hook/close_buffer/enable_empty_data" : 1,
+        \           "outputter" : "multi:buffer:quickfix",
+        \           "outputter/buffer/split" : ":botright 8sp",
+        \           "runner" : "vimproc",
+        \           "runner/vimproc/updatetime" : 40
+        \       }
+        \}
+  let g:quickrun_config["java"] = {
+        \ 'exec' : ['javac -J-Dfile.encoding=UTF8 %o %s', '%c -Dfile.encoding=UTF8 %s:t:r %a']
+        \}
+  let g:quickrun_config["c"] = {
+        \       'type': 'c/gcc',
+        \       'command': 'clang',
+        \       'exec': ['%c %o %s -o %s:p:r', '%s:p:r %a'],
+        \       'tempfile': '%{tempname()}.c',
+        \       'hook/sweep/files': '%S:p:r',
+        \       'cmdopt': '-std=c99 -Wall'
+        \}
+endif
+" }}} quickrun
+
+" vim-clang {{{
+if s:dein_enabled && dein#tap("vim-clang")
+  " disable auto completion for vim-clanG
+  let g:clang_auto = 0
+  let g:clang_complete_auto = 0
+  let g:clang_auto_select = 0
+  let g:clang_use_library = 1
+
+  "default 'longest' can not work with neocomplete
+  let g:clang_c_completeopt   = 'menuone'
+  let g:clang_cpp_completeopt = 'menuone'
+
+  if executable('clang-3.6')
+      let g:clang_exec = 'clang-3.6'
+  elseif executable('clang-3.5')
+      let g:clang_exec = 'clang-3.5'
+  elseif executable('clang-3.4')
+      let g:clang_exec = 'clang-3.4'
+  else
+      let g:clang_exec = 'clang'
+  endif
+
+  if executable('clang-format-3.6')
+      let g:clang_format_exec = 'clang-format-3.6'
+  elseif executable('clang-format-3.5')
+      let g:clang_format_exec = 'clang-format-3.5'
+  elseif executable('clang-format-3.4')
+      let g:clang_format_exec = 'clang-format-3.4'
+  else
+      let g:clang_format_exec = 'clang-format'
+  endif
+
+  let g:clang_c_options = '-std=c11'
+  let g:clang_cpp_options = '-std=c++11 -stdlib=libc++'
+
+endif
+" }}} vim-clang
+
+" syntastic{{{
+if s:dein_enabled && dein#tap("syntastic")
+  " Disable automatic check at file open/close
+  let g:syntastic_check_on_open=0
+  let g:syntastic_check_on_wq=0
+
+  let g:syntastic_enable_signs=1
+  let g:syntastic_auto_loc_list=2
+  " C
+  let g:syntastic_c_check_header = 1
+  let g:syntastic_c_auto_refresh_includes = 1
+  " C++
+  let g:syntastic_cpp_check_header = 1
+  " Java
+  let g:syntastic_java_javac_config_file_enabled = 1
+  " python
+  let g:syntastic_python_checkers = ['pyflakes', 'pep8']
+  " CUDA
+  let g:syntastic_cuda_check_header = 1
+  let g:syntastic_cuda_arch = "sm_35"
+endif
+" }}} syntastic
+
+" {{{ indentLine
+if s:dein_enabled && dein#tap("indentLine")
+  let g:indent_guides_enable_on_vim_startup = 1
+  let g:indent_guides_start_level = 2
+  let g:indent_guides_guide_size = 1
+  let g:indent_guides_exclude_filetypes = ['help', 'nerdtree', 'tagbar', 'unite']
+  let g:indentLine_faster = 1
+endif
+" indentLine }}}
+
+" {{{ DoxygenToolkit
+if s:dein_enabled && dein#tap("DoxygenToolkit.vim")
+  let g:DoxygenToolkit_briefTag_pre="@Synopsis  "
+  let g:DoxygenToolkit_paramTag_pre="@Param "
+  let g:DoxygenToolkit_returnTag="@Returns   "
+  let g:DoxygenToolkit_blockHeader="-------------------------------"
+  let g:DoxygenToolkit_blockFooter="---------------------------------"
+  let g:DoxygenToolkit_authorName="Gong Chen <jie211.jp@gmail.com>"
+  let g:DoxygenToolkit_licenseTag="This is free and unencumbered code released into the public domain."
+  let g:DoxygenToolkit_briefTag_funcName="yes"
+  let g:doxygen_enhanced_color=1
+endif
+" DoxygenToolkit}}}
+
+" {{{ vim-over
+if s:dein_enabled && dein#tap("vim-over")
+  nnoremap <Leader>o :OverCommandLine<CR>%s/
+  xnoremap <Leader>o :OverCommandLine<CR>s/
+endif
+" vim-over }}}
+
+" {{{ undotree
+if s:dein_enabled && dein#tap("undotree")
+  nmap <Leader>u :UndotreeToggle<CR>
+  let g:undotree_SetFocusWhenToggle = 1
+  let g:undotree_WindowLayout = 'topleft'
+  let g:undotree_SplitWidth = 35
+  let g:undotree_diffAutoOpen = 1
+  let g:undotree_diffpanelHeight = 25
+  let g:undotree_RelativeTimestamp = 1
+  let g:undotree_TreeNodeShape = '*'
+  let g:undotree_HighlightChangedText = 1
+  let g:undotree_HighlightSyntax = "UnderLined"
+endif
+" undotree }}}
+
+" NERDTree+SrcExpl+tagbar {{{
+
+" The NERD Tree  {{{
+if s:dein_enabled && dein#tap("nerdtree")
+  nnoremap <Leader>N :NERDTreeToggle<CR>
+endif
+"}}}
+
+" SrcExpl  {{{
+if s:dein_enabled && dein#tap("SrcExpl")
+  " Set refresh time in ms
+  let g:SrcExpl_RefreshTime = 1000
+  " Is update tags when SrcExpl is opened
+  let g:SrcExpl_isUpdateTags = 0
+  " Tag update command
+  let g:SrcExpl_updateTagsCmd = 'ctags --sort=foldcase %'
+  " Update all tags
+  function! g:SrcExpl_UpdateAllTags()
+    let g:SrcExpl_updateTagsCmd = 'ctags --sort=foldcase -R .'
+    call g:SrcExpl_UpdateTags()
+    let g:SrcExpl_updateTagsCmd = 'ctags --sort=foldcase %'
+  endfunction
+  " Source Explorer Window Height
+  let g:SrcExpl_winHeight = 14
+  " Mappings
+  nnoremap [srce] <Nop>
+  nmap <Leader>E [srce]
+  nnoremap <silent> [srce]<CR> :SrcExplToggle<CR>
+  nnoremap <silent> [srce]u :call g:SrcExpl_UpdateTags()<CR>
+  nnoremap <silent> [srce]a :call g:SrcExpl_UpdateAllTags()<CR>
+  nnoremap <silent> [srce]n :call g:SrcExpl_NextDef()<CR>
+  nnoremap <silent> [srce]p :call g:SrcExpl_PrevDef()<CR>
+endif
+"}}}
+
+" tagbar {{{
+if s:dein_enabled && dein#tap("tagbar")
+  " Width (default 40)
+  let g:tagbar_width = 20
+  " Mappings
+  nnoremap <silent> <leader>T :TagbarToggle<CR>
+endif
+"}}} tagbar
+
+if s:dein_enabled && dein#tap("nerdtree") && dein#tap("SrcExpl") && dein#tap("tagbar")
+  nnoremap <silent> <Leader>A :SrcExplToggle<CR>:NERDTreeToggle<CR>:TagbarToggle<CR>
+endif
+" }}}
+" }}}
+
+
+" {{{ lightline
+if s:dein_enabled && dein#tap("lightline.vim")
+  let g:lightline = {
+    \"colorscheme": "jellybeans",
+    \"active": {
+      \"left": [["mode", "filename"], ["fugitive"], ["anzu"]],
+      \"right": [["lineinfo"], ["fileinfo"]]},
+    \"component_visible_condition": {
+      \"fugitive": '(exists("*fugitive#head") && ""!=fugitive#head())'},
+    \'component_function': {
+      \'mode': 'MyMode',
+      \'filename': 'MyFileName',
+      \'fugitive': 'MyFugitive',
+      \'fileinfo': 'MyFileInfo',
+      \'lineinfo': 'MyLineInfo',
+      \'anzu': 'anzu#search_status'
+      \},
+    \ 'separator': { 'left': '', 'right': '' },
+    \ 'subseparator': { 'left': '', 'right': '' }
+    \}
+  let g:lightline.inactive = g:lightline.active
+
+  function! MyMode()
+    let l:ps = ''
+    if &paste
+      let l:ps = " P"
+    endif
+    return lightline#mode() . l:ps
+  endfunction
+
+  function! MyFileName()
+    let l:fn = expand("%:t")
+    let l:ro = &ft !~? 'help' && &readonly ? " RO" : ""
+    let l:mo = &modifiable && &modified ? " +" : ""
+    return l:fn . l:ro . l:mo
+  endfunction
+
+  function! MyFugitive()
+    let l:fu = exists('*fugitive#head') ? fugitive#head() : ''
+    return winwidth('.') >=
+          \  strlen(MyMode()) + 2
+          \+ strlen(MyFileName()) + 2
+          \+ strlen(l:fu) + 2
+          \+ strlen(MyLineInfo()) + 2
+          \? l:fu : ''
+  endfunction
+
+  function! MyFileInfo()
+    let l:ff = &fileformat
+    let l:fe = (strlen(&fenc) ? &fenc : &enc)
+    let l:ft = (strlen(&filetype) ? &filetype : 'no')
+    let l:fi = l:ff . " " . l:fe . " " . l:ft
+    return winwidth('.') >=
+          \  strlen(MyMode()) + 2
+          \+ strlen(MyFileName()) + 2
+          \+ strlen(MyFugitive())
+          \+ ((exists("*fugitive#head") && ""!=fugitive#head()) ? 2 : 0)
+          \+ strlen(l:fi) + 2
+          \+ strlen(MyLineInfo()) + 2
+          \? l:fi : ''
+  endfunction
+
+  function! MyLineInfo()
+    let l:cl = line(".")
+    let l:ll = line("$")
+    let l:cc = col(".")
+    let l:li = printf("%4d/%d:%3d", l:cl, l:ll, l:cc)
+    return winwidth('.') >=
+          \  strlen(MyFileName()) + 2
+          \+ strlen(l:li) + 2
+          \? l:li : ''
+  endfunction
+endif
+" lightline}}}
+
+" {{{ auto-ctags
+if s:dein_enabled && dein#tap("auto-ctags.vim")
+  if has('path_extra')
+          set tags+=tags;
+  endif
+  let g:auto_ctags = 1
+  let g:auto_ctags_filetype_mode = 1
+  let g:auto_ctags_directory_list = ['.git', '.svn', './']
+  let g:auto_ctags_tags_args = '--sort=foldcase -R'
+endif
+" auto-ctags }}}
+
+" {{{ vimshellm
+if s:dein_enabled && dein#tap("vimshell.vim")
+  let g:vimshell_prompt_expr = 'getcwd()." > "'
+  let g:vimshell_prompt_pattern = '^\f\+ > '
+endif
+" vimshell}}}
+
+" {{{ vim-anzu
+if s:dein_enabled && dein#tap("vim-anzu")
+  nmap n <Plug>(anzu-n)
+  nmap N <Plug>(anzu-N)
+  nmap * <Plug>(anzu-star)
+  nmap # <Plug>(anzu-sharp)
+  "nmap <Esc><Esc> <Plug>(anzu-clear-search-status)
+endif
+" vim-anzu }}}
+
+" {{{ incsearch
+if s:dein_enabled && dein#tap("incsearch.vim")
+  map / <Plug>(incsearch-forward)
+  map ? <Plug>(incsearch-backward)
+  map g/ <Plug>(incsearch-stay)
+  let g:incsearch#magic = '\v'
+endif
+"incsearch }}}
+
+" wildfire {{{
+if s:dein_enabled && dein#tap("wildfire.vim")
+  " This selects the next closest text object.
+  let g:wildfire_fuel_map = "<ENTER>"
+endif
+" }}}
+
+" vim-easymotion{{{
+if s:dein_enabled && dein#tap("vim-easymotion")
+  let g:EasyMotion_do_mapping=0
+  let g:EasyMotion_grouping=1
+  let g:EasyMotion_enter_jump_first=1
+  let g:EasyMotion_space_jump_first=1
+  let g:EasyMotion_smartcase=1
+  let g:EasyMotion_use_upper=1
+  let g:EasyMotion_keys="hjklasdfgyuiopqwertnmzxcvb"
+  hi EasyMotionTarget ctermbg=none ctermfg=red
+  hi EasyMotionShade  ctermbg=none ctermfg=blue
+
+  map S <Plug>(easymotion-sn)
+  map <Leader>f <Plug>(easymotion-bd-W)
+  "nmap <Leader>f <Plug>(easymotion-overwin-w)
+endif
+" }}} vim-easymotion
+
+" {{{vim-grammarous
+if s:dein_enabled && dein#tap("vim-grammarous")
+let g:grammarous#hooks = {}
+  function! g:grammarous#hooks.on_check(errs)
+    nmap <buffer><C-n> <Plug>(grammarous-move-to-next-error)
+    nmap <buffer><C-p> <Plug>(grammarous-move-to-previous-error)
+  endfunction
+
+  function! g:grammarous#hooks.on_reset(errs)
+    nunmap <buffer><C-n>
+    nunmap <buffer><C-p>
+  endfunction
+endif
+" vim-grammarous}}}
+
+" translategoogle {{{
+if s:dein_enabled && dein#tap("translategoogle.vim")
+  let g:translategoogle_language = ["ja", "en", "ch"]
+  let g:translategoogle_default_sl = "en"
+  let g:translategoogle_default_tl = "ja"
+
+  command! -nargs=*
+            \ TranslateGoogleCmdYank redi @+ | echon translategoogle#command(<q-args>) | redi END
+  command! -nargs=*
+            \ TranslateGoogleCmdReverseYank redi @+ | echon translategoogle#command_reverse(<q-args>) | redi END
+
+  nnoremap tj yiw:TranslateGoogleCmdYank <C-R>"<CR>
+  nnoremap tr yiw:TranslateGoogleCmdReverseYank <C-R>"<CR>
+
+endif
+" }}} translategoogle.vim
+
+" vim-ref {{{
+if s:dein_enabled && dein#tap("vim-ref")
+  " Set webdict sources
+  let g:ref_source_webdict_sites = {
+        \   "je": {
+        \     "url": "http://dictionary.infoseek.ne.jp/jeword/%s",
+        \   },
+        \   "ej": {
+        \     "url": "http://dictionary.infoseek.ne.jp/ejword/%s",
+        \   },
+        \   "wikipedia": {
+        \     "url": "http://ja.wikipedia.org/wiki/%s",
+        \   },
+        \   "wikipedia_en": {
+        \     "url": "http://wikipedia.org/wiki/%s",
+        \   },
+        \ }
+
+  " Set default
+  let g:ref_source_webdict_sites.default = "ej"
+
+  " Filter
+  function! g:ref_source_webdict_sites.je.filter(output)
+    return join(split(a:output, "\n")[15 :], "\n")
+  endfunction
+  function! g:ref_source_webdict_sites.ej.filter(output)
+    return join(split(a:output, "\n")[15 :], "\n")
+  endfunction
+  function! g:ref_source_webdict_sites.wikipedia.filter(output)
+    return join(split(a:output, "\n")[17 :], "\n")
+  endfunction
+  function! g:ref_source_webdict_sites.wikipedia_en.filter(output)
+    return join(split(a:output, "\n")[17 :], "\n")
+  endfunction
+
+  " vim-ref prefix
+  nnoremap [ref] <Nop>
+  xnoremap [ref] <Nop>
+  nmap <Leader>x [ref]
+  xmap <Leader>x [ref]
+  nnoremap [ref]j :Ref webdict je<Space>
+  nnoremap [ref]e :Ref webdict ej<Space>
+  nnoremap [ref]w :Ref webdict wikipedia<Space>
+  nnoremap [ref]m :Ref man<Space>
+  xnoremap [ref]j :<C-u>Ref webdict je <C-R><C-w><CR>
+  xnoremap [ref]e :<C-u>Ref webdict ej <C-R><C-w><CR>
+  xnoremap [ref]w :<C-u>Ref webdict wikipedia <C-R><C-w><CR>
+endif
+" }}} vim-ref
+
+" {{{ tmuxline.vim
+if s:dein_enabled && dein#tap("tmuxline.vim")
+  let g:tmuxline_theme = 'jellybeans'
+endif
+" tmuxline.vim}}}
+" }}} Plugin settings
