@@ -108,11 +108,79 @@ else # OS X `ls`
   colorflag="-G"
 fi
 
-autoload -U compinit && compinit
+autoload -Uz compinit && compinit
 
 # Add <TAB> completion handlers for fzf *after* fzf is loaded
 _fzf_complete_z() {
   _fzf_complete '--multi --reverse' "$@" < <(raw_z)
+}
+
+# fzf
+
+
+export FZF_DEFAULT_OPTS='
+  --color fg:242,bg:236,hl:65,fg+:15,bg+:239,hl+:108
+  --color info:108,prompt:109,spinner:108,pointer:168,marker:168
+'
+
+# vf - fuzzy open with vim from anywhere
+vf() {
+  local files
+
+  files=(${(f)"$(locate -i -0 $@ | grep -z -vE '~$' | fzf --read0 -0 -1 -m)"})
+
+  if [[ -n $files ]]
+  then
+    vim -- $files
+    print -l $files[1]
+  fi
+}
+
+# fo - open 
+#   - CTRL-O to open with `open` command,
+#   - CTRL-E or Enter key to open with the $EDITOR
+fo() {
+  local out file key
+  out=$(fzf --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
+  key=$(head -1 <<< "$out")
+  file=$(head -2 <<< "$out" | tail -1)
+  if [ -n "$file" ]; then
+    [ "$key" = ctrl-o ] && open "$file" || ${EDITOR:-vim} "$file"
+      fi
+}
+
+# fd - cd to selected directory
+fd() {
+  local dir
+  dir=$(find ${1:-.} -path '*/\.*' -prune \
+        -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
+}
+
+# fda - including hidden directories
+fda() {
+  local dir
+  dir=$(find ${1:-.} -type d 2> /dev/null | fzf +m) && cd "$dir"
+}
+
+# fkill - kill process
+fkill() {
+  pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
+
+  if [ "x$pid" != "x" ]
+  then
+    kill -${1:-9} $pid
+  fi
+}
+
+# fs [FUZZY PATTERN] - Select selected tmux session
+#   - Bypass fuzzy finder if there's only one match (--select-1)
+#   - Exit if there's no match (--exit-0)
+fs() {
+  local session
+  session=$(tmux list-sessions -F "#{session_name}" | \
+    fzf --query="$1" --select-1 --exit-0) &&
+  tmux switch-client -t "$session"
 }
 
 ################

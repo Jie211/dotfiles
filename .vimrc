@@ -209,6 +209,8 @@ if s:use_dein && v:version >= 704
     "edkolev/tmuxline.vim
     call dein#add('edkolev/tmuxline.vim')
 
+    call dein#add('junegunn/seoul256.vim')
+
     call dein#end()
 
     call dein#save_state()
@@ -251,6 +253,10 @@ set showcmd
 set matchtime=3
 set laststatus=2
 set background=dark
+
+let g:seoul256_background = 233
+colo seoul256
+
 
 "######################
 "for Programming
