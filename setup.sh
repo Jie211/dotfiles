@@ -130,7 +130,7 @@ Do_brew(){
     :
   fi
 
-  for pkg in wget w3m lynx reattach-to-user-namespace zsh vim tmux git source-highlight; do
+  for pkg in wget w3m lynx reattach-to-user-namespace zsh vim tmux git ; do
     if brew list -1 | grep -q "^${pkg}\$"; then
       :
     else
