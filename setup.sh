@@ -158,7 +158,7 @@ Do_brew(){
 }
 
 Do_yum(){
-  print_error "You need install those packages by yourself" "w3m lynx"
+  print_error "You need install those packages by yourself" "[ w3m lynx ]"
 }
 
 Do_log(){
@@ -184,7 +184,6 @@ if [ $(get_os) == 'osx' ]; then
 elif [ $(get_os) == 'centos' ]; then
   Do_yum
 fi
-Do_brew
 Do_SUFFIX
 
 print_info "job done"
