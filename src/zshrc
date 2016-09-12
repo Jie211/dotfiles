@@ -230,4 +230,6 @@ function loadlib() {
   fi
 }
 
+loadlib ~/zsh-local
+
 zplug load --verbose
