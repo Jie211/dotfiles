@@ -1,3 +1,5 @@
+loadlib ~/.zsh-local
+
 # if zplug is not installed, automatically clone it and reload shell
 if [[ ! -d ~/.zplug ]]; then
   echo "zplug is not installed in this machine."
@@ -242,14 +244,5 @@ else # OS X `ls`
 fi
 
 alias ls='ls ${colorflag}'
-
-function loadlib() {
-  lib=${1:?"You have to specify a library file"}
-  if [ -f "$lib" ];then #ファイルの存在を確認
-    . "$lib"
-  fi
-}
-
-loadlib ~/.zsh-local
 
 zplug load --verbose

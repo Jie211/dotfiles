@@ -126,3 +126,10 @@ print_success() {
   # Print output in green
   printf "\e[0;32m  [✔] $1\e[0m\n"
 }
+
+loadlib() {
+  lib=${1:?"You have to specify a library file"}
+  if [ -f "$lib" ];then #ファイルの存在を確認
+    . "$lib"
+  fi
+}
