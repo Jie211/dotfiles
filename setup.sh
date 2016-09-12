@@ -28,7 +28,7 @@ if [ $(get_os) == 'osx' ]; then
 elif [ $(get_os) == 'centos' ]; then
   print_info "Running on CentOS"
 else
-  print_error "Running on unsupport OS -> exit"
+  print_error "Running on unsupport OS " "exit"
   exit
 fi
 
@@ -106,7 +106,7 @@ Do_Link(){
         # print_success "$Source_File -> $Target_File"
         execute "ln -fs $Source_File $Target_File" "$Source_File → $Target_File" "Failed to link $Source_File → $Target_File"
       else
-        print_error "$Source_File -> $Target_File"
+        print_error "$Source_File -> $Target_File" "Failed"
       fi
     fi
   done
@@ -158,8 +158,7 @@ Do_brew(){
 }
 
 Do_yum(){
-  print_error "You need install those packages by yourself"
-  print_error "w3m lynx"
+  print_error "You need install those packages by yourself" "w3m lynx"
 }
 
 Do_log(){
