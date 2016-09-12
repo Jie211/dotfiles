@@ -35,6 +35,11 @@ ask_for_sudo() {
 
 }
 
+command_exist() {
+  command -v "$1" > /dev/null 2>&1
+  return $?
+}
+
 cmd_exists() {
   [ -x "$(command -v "$1")" ] \
     && printf 0 \

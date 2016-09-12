@@ -16,10 +16,9 @@ fi
 
 source ~/.zplug/init.zsh
 
+
 # Triaging
 zplug 'zsh-users/zsh-history-substring-search'
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
 zplug 'zsh-users/zsh-completions'
 zplug 'supercrabtree/k'
 
@@ -33,17 +32,24 @@ zplug "Jxck/dotfiles", as:command, use:"bin/{histuniq,color}"
 zplug "k4rthik/git-cal", as:command, frozen:1
 
 # fzf from:gh-r -> GithubReleases use:* -> OS delect
-zplug "junegunn/fzf-bin", \
-  from:gh-r, \
-  as:command, \
-  rename-to:fzf, \
-  use:"*darwin*amd64*"
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  zplug "junegunn/fzf-bin", \
+    from:gh-r, \
+    as:command, \
+    rename-to:fzf, \
+    use:"*linux*386*"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  zplug "junegunn/fzf-bin", \
+    from:gh-r, \
+    as:command, \
+    rename-to:fzf, \
+    use:"*darwin*amd64*"
+
+  zplug "lib/clipboard", from:oh-my-zsh
+fi
 
 # git plug
 zplug "plugins/git", from:oh-my-zsh
-
-# Load if "if" tag returns true
-zplug "lib/clipboard", from:oh-my-zsh, if:"[[ $OSTYPE == *darwin* ]]"
 
 # dependencies
 zplug "stedolan/jq", \
@@ -54,23 +60,22 @@ zplug "b4b4r07/emoji-cli", \
   on:"stedolan/jq"
 
 zplug "mollifier/anyframe"
-
+#
 zplug "b4b4r07/enhancd", use:init.sh
-
-zplug "b4b4r07/zsh-gomi", as:command, use:bin/gomi, if:"which fzf"
-
+#
+zplug "b4b4r07/zsh-gomi", on:"junegunn/fzf-bin"
+#
 zplug "mrowa44/emojify", as:command
-
+#
 zplug "plugins/colored-man-pages", from:oh-my-zsh
-
+#
 ###############
 # theme
 ###############
 
 setopt prompt_subst
-zplug "robbyrussell/oh-my-zsh"
-zplug "adambiggs/zsh-theme", use:adambiggs.zsh-theme
-
+# zplug "adambiggs/zsh-theme", use:adambiggs.zsh-theme, from:oh-my-zsh
+zplug "caiogondim/bullet-train-oh-my-zsh-theme"
 BULLETTRAIN_PROMPT_ORDER=(
   time
   status
@@ -90,10 +95,14 @@ BULLETTRAIN_EXEC_TIME_SHOW=true
 # config
 ################
 
+EMOJI_CLI_KEYBIND="^f"
+
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+
 # anyfame
 zstyle ":anyframe:selector:" use fzf
 zstyle ":anyframe:selector:fzf:" command 'fzf --extended'
-bindkey '^xe' anyframe-widget-execute-history
 bindkey '^xr' anyframe-widget-put-history
 bindkey '^xk' anyframe-widget-kill
 bindkey '^xt' anyframe-widget-tmux-attach

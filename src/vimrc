@@ -211,6 +211,8 @@ if s:use_dein && v:version >= 704
 
     call dein#add('junegunn/seoul256.vim')
 
+    call dein#add('cohama/lexima.vim')
+
     call dein#end()
 
     call dein#save_state()

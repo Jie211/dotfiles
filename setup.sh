@@ -136,30 +136,30 @@ Do_brew(){
 
   execute "brew update" "brew update" "Cannot update brew"
 
-  for pkg in wget w3m lynx reattach-to-user-namespace zsh vim tmux git ; do
+  for pkg in wget w3m lynx zsh vim tmux git ; do
+    if ! command_exist ${pkg}; then
+      print_info "Installing $pkg"
+      if [ $pkg == vim ]; then
+        execute "brew install vim --with-lua --with-luajit" "Install vim" "Cannot install vim"
+      fi
+      execute "brew install vim --with-lua --with-luajit" "Install vim" "Cannot install vim"
+    fi
+  done
+
+  for pkg in reattach-to-user-namespace ; do
     if brew list -1 | grep -q "^${pkg}\$"; then
       :
     else
-        # echo "install '$pkg' "
-        print_info "Installing $pkg"
-        if [ $pkg == vim ]; then
-          execute "brew install vim --with-lua --with-luajit" "Install vim" "Cannot install vim"
-        fi
-        execute "brew install $pkg" "Install $pkg" "Cannot install $pkg"
+      print_info "Installing $pkg"
+      execute "brew install $pkg" "Install $pkg" "Cannot install $pkg"
     fi
   done
+
 }
 
 Do_yum(){
-  print_info "Install linuxbrew packages by yum"
-
-  for pkg in w3m lynx ; do
-    if yum list installed $pkg > /dev/null 2>&1; then
-      :
-    else
-      execute "yum install $pkg" "Install $pkg" "Cannot install $pkg"
-    fi
-  done
+  print_error "You need install those packages by yourself"
+  print_error "w3m lynx"
 }
 
 Do_log(){
