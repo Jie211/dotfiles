@@ -37,7 +37,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
     from:gh-r, \
     as:command, \
     rename-to:fzf, \
-    use:"*linux*386*"
+    use:"*linux*amd64*"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
   zplug "junegunn/fzf-bin", \
     from:gh-r, \
