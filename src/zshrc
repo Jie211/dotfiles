@@ -70,7 +70,6 @@ zplug "plugins/colored-man-pages", from:oh-my-zsh
 setopt prompt_subst
 zplug "robbyrussell/oh-my-zsh"
 zplug "adambiggs/zsh-theme", use:adambiggs.zsh-theme
-zplug "caiogondim/bullet-train-oh-my-zsh-theme"
 
 BULLETTRAIN_PROMPT_ORDER=(
   time
