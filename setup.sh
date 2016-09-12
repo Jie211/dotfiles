@@ -134,6 +134,8 @@ Do_brew(){
     :
   fi
 
+  execute "brew update" "brew update" "Cannot update brew"
+
   for pkg in wget w3m lynx reattach-to-user-namespace zsh vim tmux git ; do
     if brew list -1 | grep -q "^${pkg}\$"; then
       :
@@ -149,7 +151,7 @@ Do_brew(){
 }
 
 Do_yum(){
-  print_info "Install packages by yum"
+  print_info "Install linuxbrew packages by yum"
 
   for pkg in w3m lynx ; do
     if yum list installed $pkg > /dev/null 2>&1; then
