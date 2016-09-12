@@ -23,8 +23,12 @@ DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # read functions
 . "$DOTFILES_DIR"/etc/func.sh
 
-if [ ! $(get_os) == 'osx' ]; then
-  print_error "This Script Only for MacOS now -> " "exit"
+if [ $(get_os) == 'osx' ]; then
+  print_info "Running on macOS"
+elif [ $(get_os) == 'centos' ]; then
+  print_info "Running on CentOS"
+else
+  print_error "Running on unsupport OS -> exit"
   exit
 fi
 
@@ -144,6 +148,18 @@ Do_brew(){
   done
 }
 
+Do_yum(){
+  print_info "Install packages by yum"
+
+  for pkg in w3m lynx ; do
+    if yum list installed $pkg > /dev/null 2>&1; then
+      :
+    else
+      execute "yum install $pkg" "Install $pkg" "Cannot install $pkg"
+    fi
+  done
+}
+
 Do_log(){
   dotfiles_logo='
         | |     | |  / _(_) |
@@ -162,6 +178,11 @@ print_info "job start"
 
 Do_PRE
 Do_Link
+if [ $(get_os) == 'osx' ]; then
+  Do_brew
+elif [ $(get_os) == 'centos' ]; then
+  Do_yum
+fi
 Do_brew
 Do_SUFFIX
 
