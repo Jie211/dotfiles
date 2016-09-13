@@ -1,10 +1,14 @@
-function loadlib() {
-  lib=${1:?"You have to specify a library file"}
-  if [ -f "$lib" ];then #ファイルの存在を確認
-    . "$lib"
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  echo $SHELL
+  if [[ "$SHELL" != "/home/chen/.linuxbrew/bin/zsh" ]]; then
+    if [ "$PS1" ]; then
+      if [ -x "$HOME/.linuxbrew/bin/zsh" ]; then
+        export SHELL=$HOME/.linuxbrew/bin/zsh
+        exec $SHELL -l
+      fi
+    fi
   fi
-}
-loadlib ~/.zsh-local
+fi
 # if zplug is not installed, automatically clone it and reload shell
 if [[ ! -d ~/.zplug ]]; then
   echo "zplug is not installed in this machine."
@@ -84,8 +88,8 @@ setopt prompt_subst
 # zplug "adambiggs/zsh-theme", use:adambiggs.zsh-theme, from:oh-my-zsh
 zplug "caiogondim/bullet-train-oh-my-zsh-theme"
 BULLETTRAIN_PROMPT_ORDER=(
-  time
   status
+  time
   context
   dir
   git
@@ -97,6 +101,9 @@ BULLETTRAIN_STATUS_EXIT_SHOW=true
 BULLETTRAIN_TIME_12HR=false
 BULLETTRAIN_DIR_EXTENDED=0
 BULLETTRAIN_EXEC_TIME_SHOW=true
+BULLETTRAIN_CONTEXT_SHOW=true
+BULLETTRAIN_IS_SSH_CLIENT=true
+BULLETTRAIN_CONTEXT_DEFAULT_USER='chen'
 
 ################
 # config
@@ -249,5 +256,13 @@ else # OS X `ls`
 fi
 
 alias ls='ls ${colorflag}'
+
+function loadlib() {
+  lib=${1:?"You have to specify a library file"}
+  if [ -f "$lib" ];then #ファイルの存在を確認
+    . "$lib"
+  fi
+}
+loadlib ~/.zsh-local
 
 zplug load --verbose
