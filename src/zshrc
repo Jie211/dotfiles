@@ -85,7 +85,6 @@ zplug "plugins/colored-man-pages", from:oh-my-zsh
 ###############
 
 setopt prompt_subst
-# zplug "adambiggs/zsh-theme", use:adambiggs.zsh-theme, from:oh-my-zsh
 zplug "caiogondim/bullet-train-oh-my-zsh-theme"
 BULLETTRAIN_PROMPT_ORDER=(
   status
@@ -108,17 +107,84 @@ BULLETTRAIN_CONTEXT_DEFAULT_USER='chen'
 ################
 # config
 ################
+setopt correct
+setopt auto_cd
+# 補完関数の表示を強化する
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
+zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
+zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
+zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULT
+zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
+# セパレータを設定する
+zstyle ':completion:*' list-separator '-->'
+zstyle ':completion:*:manuals' separate-sections true
+# マッチ種別を別々に表示
+zstyle ':completion:*' group-name ''
+# 大文字小文字を区別しない（大文字を入力した場合は区別する）
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+# 補完候補表示時にビープ音を鳴らさない
+setopt nolistbeep
+# 候補が多い場合は詰めて表示
+setopt list_packed
+# コマンドラインの引数でも補完を有効にする（--prefix=/userなど）
+setopt magic_equal_subst
+# cd -<tab>で以前移動したディレクトリを表示
+setopt auto_pushd
+# auto_pushdで重複するディレクトリは記録しない
+setopt pushd_ignore_dups
 
 # 履歴ファイルの保存先
 export HISTFILE=${HOME}/.zsh_history
-# メモリに保存される履歴の件数
-export HISTSIZE=1000
-# 履歴ファイルに保存される履歴の件数
-export SAVEHIST=100000
-# 重複を記録しない
+# メモリ上に保存される件数（検索できる件数）
+HISTSIZE=100000
+# ファイルに保存される件数
+SAVEHIST=100000
+# rootは履歴を残さないようにする
+if [ $UID = 0 ]; then
+  unset HISTFILE
+  SAVEHIST=0
+fi
+# 履歴検索
+autoload history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "^P" history-beginning-search-backward-end
+bindkey "^N" history-beginning-search-forward-end
+# 履歴を複数の端末で共有する
+setopt share_history
+# 直前と同じコマンドの場合は履歴に追加しない
 setopt hist_ignore_dups
-# 開始と終了を記録
-setopt EXTENDED_HISTORY
+# 重複するコマンドは古い法を削除する
+setopt hist_ignore_all_dups
+# 履歴ファイルにzsh の開始・終了時刻を記録する
+setopt extended_history
+# 先頭がスペースで始まる場合は履歴に追加しない
+setopt hist_ignore_space
+# 補完候補もLS_COLORSに合わせて色が付くようにする
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+setopt auto_param_slash      # ディレクトリ名の補完で末尾の / を自動的に付加し、次の補完に備える
+setopt mark_dirs             # ファイル名の展開でディレクトリにマッチした場合 末尾に / を付加
+setopt list_types            # 補完候補一覧でファイルの種別を識別マーク表示 (訳注:ls -F の記号)
+setopt auto_menu             # 補完キー連打で順に補完候補を自動で補完
+setopt auto_param_keys       # カッコの対応などを自動的に補完
+setopt interactive_comments  # コマンドラインでも # 以降をコメントと見なす
+setopt magic_equal_subst     # コマンドラインの引数で --prefix=/usr などの = 以降でも補完できる
+
+setopt complete_in_word      # 語の途中でもカーソル位置で補完
+setopt always_last_prompt    # カーソル位置は保持したままファイル名一覧を順次その場で表示
+
+setopt print_eight_bit  #日本語ファイル名等8ビットを通す
+setopt extended_glob  # 拡張グロブで補完(~とか^とか。例えばless *.tx)
+# manの補完をセクション番号別に表示させる
+zstyle ':completion:*:manuals' separate-sections true
+# 変数の添字を補完する
+zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
+# apt-getとかdpkgコマンドをキャッシュを使って速くする
+zstyle ':completion:*' use-cache true
+#cd は親ディレクトリからカレントディレクトリを選択しないので表示させないようにする (例: cd ../<TAB>):
+zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
 EMOJI_CLI_KEYBIND="^f"
 
