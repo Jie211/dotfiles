@@ -322,8 +322,8 @@ else # OS X `ls`
   alias ls='ls --color=auto'
 fi
 
+export GREP_OPTIONS='--color=auto'
 alias vi=vim
-
 
 function loadlib() {
   lib=${1:?"You have to specify a library file"}
@@ -331,6 +331,7 @@ function loadlib() {
     . "$lib"
   fi
 }
+
 loadlib ~/.zsh-local
 
 zplug load --verbose
