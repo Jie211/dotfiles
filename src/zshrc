@@ -322,7 +322,9 @@ else # OS X `ls`
   alias ls='ls --color=auto'
 fi
 
-export GREP_OPTIONS='--color=auto'
+GREP_OPTIONS="--color=auto --binary-files=without-match"
+alias grep="grep $GREP_OPTIONS"
+unset GREP_OPTIONS
 alias vi=vim
 
 function loadlib() {
