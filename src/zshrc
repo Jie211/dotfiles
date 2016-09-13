@@ -307,7 +307,6 @@ function update_zplug {
 ################
 # system
 ################
-alias vi=vim
 
 export PATH="/usr/local/bin:/usr/local/lib:/usr/bin:/bin:/usr/sbin:/sbin"
 export TERM="xterm-256color"
@@ -315,13 +314,16 @@ export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib"
 export XDG_CONFIG_HOME="$HOME/.config"
 
 # ls color
-if ls --color > /dev/null 2>&1; then # GNU `ls`
-  colorflag="--color"
+if [ "$(uname)" = 'Darwin' ]; then 
+  export LSCOLORS=xbfxcxdxbxegedabagacad
+  alias ls='ls -G --color=auto'
 else # OS X `ls`
-  colorflag="-G"
+  eval `dircolors ~/.colorrc`
+  alias ls='ls --color=auto'
 fi
 
-alias ls='ls ${colorflag}'
+alias vi=vim
+
 
 function loadlib() {
   lib=${1:?"You have to specify a library file"}
