@@ -213,6 +213,8 @@ if s:use_dein && v:version >= 704
 
     call dein#add('cohama/lexima.vim')
 
+    call dein#add('vim-scripts/bufferlist.vim')
+
     call dein#end()
 
     call dein#save_state()
@@ -925,4 +927,7 @@ if s:dein_enabled && dein#tap("tmuxline.vim")
   let g:tmuxline_theme = 'jellybeans'
 endif
 " tmuxline.vim}}}
+"{{{
+map <silent> <C-b> :call BufferList()<CR>
+"}}} bufferlist
 " }}} Plugin settings
