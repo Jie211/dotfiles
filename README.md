@@ -5,3 +5,6 @@ macOS & CentOS
  - brew-file
 2. Support Linux
  - linuxbrew?
+
+ Linux 
+ https://github.com/adobe-fonts/source-code-pro/issues/17#issuecomment-8967116

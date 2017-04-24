@@ -85,7 +85,8 @@ zplug "plugins/colored-man-pages", from:oh-my-zsh
 ###############
 
 setopt prompt_subst
-zplug "caiogondim/bullet-train-oh-my-zsh-theme"
+#zplug "adambiggs/zsh-theme", use:adambiggs.zsh-theme
+zplug "caiogondim/bullet-train-oh-my-zsh-theme", use:bullet-train.zsh-theme
 BULLETTRAIN_PROMPT_ORDER=(
   status
   time
