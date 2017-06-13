@@ -30,6 +30,8 @@ source ~/.zplug/init.zsh
 
 # Triaging
 zplug 'zsh-users/zsh-history-substring-search'
+zplug "b4b4r07/zsh-vimode-visual"
+
 zplug 'zsh-users/zsh-completions'
 zplug 'supercrabtree/k'
 
@@ -84,30 +86,33 @@ zplug "plugins/colored-man-pages", from:oh-my-zsh
 # theme
 ###############
 
-setopt prompt_subst
-#zplug "adambiggs/zsh-theme", use:adambiggs.zsh-theme
-zplug "caiogondim/bullet-train-oh-my-zsh-theme", use:bullet-train.zsh-theme
-BULLETTRAIN_PROMPT_ORDER=(
-  status
-  time
-  context
-  dir
-  git
-  hg
-  cmd_exec_time
-)
-BULLETTRAIN_STATUS_SHOW=true
-BULLETTRAIN_STATUS_EXIT_SHOW=true
-BULLETTRAIN_TIME_12HR=false
-BULLETTRAIN_DIR_EXTENDED=0
-BULLETTRAIN_EXEC_TIME_SHOW=true
-BULLETTRAIN_CONTEXT_SHOW=true
-BULLETTRAIN_IS_SSH_CLIENT=true
-BULLETTRAIN_CONTEXT_DEFAULT_USER='chen'
+# setopt prompt_subst
+# zplug "caiogondim/bullet-train-oh-my-zsh-theme", use:bullet-train.zsh-theme
+# BULLETTRAIN_PROMPT_ORDER=(
+#   status
+#   time
+#   context
+#   dir
+#   git
+#   hg
+#   cmd_exec_time
+# )
+# BULLETTRAIN_STATUS_SHOW=true
+# BULLETTRAIN_STATUS_EXIT_SHOW=true
+# BULLETTRAIN_TIME_12HR=false
+# BULLETTRAIN_DIR_EXTENDED=0
+# BULLETTRAIN_EXEC_TIME_SHOW=true
+# BULLETTRAIN_CONTEXT_SHOW=true
+# BULLETTRAIN_IS_SSH_CLIENT=true
+# BULLETTRAIN_CONTEXT_DEFAULT_USER='chen'
+zplug "b4b4r07/ultimate", as:theme
 
 ################
 # config
 ################
+# vim - viins mode
+bindkey -v
+
 setopt correct
 setopt auto_cd
 # 補完関数の表示を強化する
@@ -311,7 +316,6 @@ function update_zplug {
 
 export PATH="/usr/local/bin:/usr/local/lib:/usr/bin:/bin:/usr/sbin:/sbin"
 export TERM="xterm-256color"
-export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib"
 export XDG_CONFIG_HOME="$HOME/.config"
 
 # ls color
