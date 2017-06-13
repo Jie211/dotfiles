@@ -101,6 +101,9 @@ if s:use_dein && v:version >= 704
         \ 'depends': ['neocomplete.vim']})
     endif
 
+    " waketime
+    call dein#add('wakatime/vim-wakatime')
+
     " Snippet
     call dein#add('Shougo/neosnippet')
     call dein#add('Shougo/neosnippet-snippets', {'depdens': ['neosnippet']})
