@@ -71,6 +71,10 @@ fi
 ################
 # Vim-like keybind as default
 bindkey -v
+
+# unset ctrl-j
+bindkey -r '^j' # Ctrl-j
+bindkey -r '^J' # Ctrl-j
 # Vim-like escaping jj keybind
 bindkey -M viins 'jj' vi-cmd-mode
 # Add emacs-like keybind to viins mode
@@ -179,14 +183,17 @@ autoload -Uz is-at-least
 # zsh-enhanced
 ###############
 export ENHANCD_COMMAND=cd
-export ENHANCD_FILTER=fzy:fzf:peco
+export ENHANCD_FILTER=fzy
 
 ###############
 # zsh-history-enhanced
 ###############
-if zplug check "b4b4r07/zsh-history-enhanced"; then
+#if zplug check "b4b4r07/zsh-history-enhanced"; then
+if zplug check "b4b4r07/history"; then
   export ZSH_HISTORY_FILE="$HOME/.zsh_history.db"
-  ZSH_HISTORY_FILTER="fzy:fzf:peco:percol"
+  bindkey -r '^j' # Ctrl-j
+  bindkey -r '^J' # Ctrl-j
+  ZSH_HISTORY_FILTER="fzy"
   ZSH_HISTORY_KEYBIND_GET_BY_DIR="^r"
   ZSH_HISTORY_KEYBIND_GET_ALL="^r^a"
   ZSH_HISTORY_KEYBIND_ARROW_UP="^p"
@@ -243,6 +250,27 @@ function loadlib() {
     . "$lib"
   fi
 }
+
+# $1 = type; 0 - both, 1 - tab, 2 - title
+# rest = text
+setTerminalText () {
+    # echo works in bash & zsh
+    local mode=$1 ; shift
+    echo -ne "\033]$mode;$@\007"
+}
+stt_both  () { setTerminalText 0 $@; }
+stt_tab   () { setTerminalText 1 $@; }
+stt_title () { setTerminalText 2 $@; }
+
+preexec() {
+    mycmd=(${(s: :)${1}})
+    echo -ne "\ek$(hostname|awk 'BEGIN{FS="."}{print $1}'):$mycmd[1]\e\\"
+}
+
+precmd() {
+    echo -ne "\ek$(hostname|awk 'BEGIN{FS="."}{print $1}'):(-.-)Zzz\e\\"
+}
+
 
 loadlib ~/.zsh-local
 
