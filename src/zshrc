@@ -1,21 +1,12 @@
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
-  echo $SHELL
-  if [[ "$SHELL" != "/home/chen/.linuxbrew/bin/zsh" ]]; then
-    if [ "$PS1" ]; then
-      if [ -x "$HOME/.linuxbrew/bin/zsh" ]; then
-        export SHELL=$HOME/.linuxbrew/bin/zsh
-        exec $SHELL -l
-      fi
-    fi
-  fi
-fi
+# vim:ft=zplug
 # if zplug is not installed, automatically clone it and reload shell
 if [[ ! -d ~/.zplug ]]; then
   echo "zplug is not installed in this machine."
   echo "Installing zplug..."
   echo ""
+  read "ZPLUG_SUDO_PASSWORD?## Need you sudo pw to install fzy, so input your sudo pw: "
   git clone https://github.com/zplug/zplug ~/.zplug
-  source ~/.zplug/init.zsh && zplug update --self
+  source ~/.zplug/init.zsh && zplug update
 fi
 
 if [[ ! -d ~/.tmux/plugins/tpm  ]]; then
@@ -27,118 +18,86 @@ fi
 
 source ~/.zplug/init.zsh
 
+zplug "yous/vanilli.sh"
 
-# Triaging
-zplug 'zsh-users/zsh-history-substring-search'
-zplug "b4b4r07/zsh-vimode-visual"
-
-zplug 'zsh-users/zsh-completions'
-zplug 'supercrabtree/k'
-
-# highlighting
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 
-# histuniq color
-zplug "Jxck/dotfiles", as:command, use:"bin/{histuniq,color}"
+zplug "b4b4r07/zsh-vimode-visual", use:"*.zsh", defer:3
 
-# git-calender frozen:1 -> no upgrade
-zplug "k4rthik/git-cal", as:command, frozen:1
+zplug "zsh-users/zsh-history-substring-search", defer:3
 
-# fzf from:gh-r -> GithubReleases use:* -> OS delect
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
-  zplug "junegunn/fzf-bin", \
-    from:gh-r, \
-    as:command, \
-    rename-to:fzf, \
-    use:"*linux*amd64*"
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-  zplug "junegunn/fzf-bin", \
-    from:gh-r, \
-    as:command, \
-    rename-to:fzf, \
-    use:"*darwin*amd64*"
+zplug "zsh-users/zsh-completions"
 
-  zplug "lib/clipboard", from:oh-my-zsh
-fi
+zplug "glidenote/hub-zsh-completion"
 
-# git plug
+zplug "Valodim/zsh-curl-completion"
+
 zplug "plugins/git", from:oh-my-zsh
 
-# dependencies
-zplug "stedolan/jq", \
-  from:gh-r, \
+zplug "jhawthorn/fzy", \
   as:command, \
-  rename-to:jq
-zplug "b4b4r07/emoji-cli", \
-  on:"stedolan/jq"
+  hook-build:"make && sudo make install"
 
-zplug "mollifier/anyframe"
-#
+zplug "monochromegane/the_platinum_searcher", \
+  as:command, \
+  from:gh-r, \
+  rename-to:"pt", \
+  frozen:1
+if [[ ! -d ~/.ptconfig.toml ]]; then
+  echo "color = true" > ~/.ptconfig.toml
+fi
+
 zplug "b4b4r07/enhancd", use:init.sh
-#
-zplug "b4b4r07/zsh-gomi", on:"junegunn/fzf-bin"
-#
-zplug "mrowa44/emojify", as:command
-#
-zplug "plugins/colored-man-pages", from:oh-my-zsh
-#
+
+zplug "b4b4r07/zsh-history-enhanced"
+
+###############
+# function
+###############
+has() {
+  type "${1:?too few arguments}" &>/dev/null
+}
+
 ###############
 # theme
 ###############
-
-# setopt prompt_subst
-# zplug "caiogondim/bullet-train-oh-my-zsh-theme", use:bullet-train.zsh-theme
-# BULLETTRAIN_PROMPT_ORDER=(
-#   status
-#   time
-#   context
-#   dir
-#   git
-#   hg
-#   cmd_exec_time
-# )
-# BULLETTRAIN_STATUS_SHOW=true
-# BULLETTRAIN_STATUS_EXIT_SHOW=true
-# BULLETTRAIN_TIME_12HR=false
-# BULLETTRAIN_DIR_EXTENDED=0
-# BULLETTRAIN_EXEC_TIME_SHOW=true
-# BULLETTRAIN_CONTEXT_SHOW=true
-# BULLETTRAIN_IS_SSH_CLIENT=true
-# BULLETTRAIN_CONTEXT_DEFAULT_USER='chen'
 zplug "b4b4r07/ultimate", as:theme
+if zplug check "b4b4r07/ultimate"; then
+  zstyle ':ultimate:prompt:path' mode 'shortpath'
+fi
 
 ################
-# config
+# key bind
 ################
-# vim - viins mode
+# Vim-like keybind as default
 bindkey -v
-
-setopt correct
-setopt auto_cd
-# 補完関数の表示を強化する
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
-zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
-zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
-zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULT
-zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
-# セパレータを設定する
-zstyle ':completion:*' list-separator '-->'
-zstyle ':completion:*:manuals' separate-sections true
-# マッチ種別を別々に表示
-zstyle ':completion:*' group-name ''
-# 大文字小文字を区別しない（大文字を入力した場合は区別する）
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-# 補完候補表示時にビープ音を鳴らさない
-setopt nolistbeep
-# 候補が多い場合は詰めて表示
-setopt list_packed
-# コマンドラインの引数でも補完を有効にする（--prefix=/userなど）
-setopt magic_equal_subst
-# cd -<tab>で以前移動したディレクトリを表示
-setopt auto_pushd
-# auto_pushdで重複するディレクトリは記録しない
+# Vim-like escaping jj keybind
+bindkey -M viins 'jj' vi-cmd-mode
+# Add emacs-like keybind to viins mode
+bindkey -M viins '^F'  forward-char
+bindkey -M viins '^B'  backward-char
+bindkey -M viins '^A'  beginning-of-line
+bindkey -M viins '^E'  end-of-line
+bindkey -M viins '^K'  kill-line
+bindkey -M viins '^Y'  yank
+bindkey -M viins '^W'  backward-kill-word
+bindkey -M viins '^U'  backward-kill-line
+bindkey -M viins '^H'  backward-delete-char
+bindkey -M viins '^?'  backward-delete-char
+bindkey -M viins '^G'  send-break
+bindkey -M viins '^D'  delete-char-or-list
+bindkey -M vicmd '^A'  beginning-of-line
+bindkey -M vicmd '^E'  end-of-line
+bindkey -M vicmd '^K'  kill-line
+bindkey -M vicmd '^P'  up-line-or-history
+bindkey -M vicmd '^N'  down-line-or-history
+bindkey -M vicmd '^Y'  yank
+bindkey -M vicmd '^W'  backward-kill-word
+bindkey -M vicmd '^U'  backward-kill-line
+bindkey -M vicmd '/'   vi-history-search-forward
+bindkey -M vicmd '?'   vi-history-search-backward
+bindkey -M vicmd 'gg' beginning-of-line
+bindkey -M vicmd 'G'  end-of-line
 setopt pushd_ignore_dups
 
 # 履歴ファイルの保存先
@@ -147,141 +106,12 @@ export HISTFILE=${HOME}/.zsh_history
 HISTSIZE=100000
 # ファイルに保存される件数
 SAVEHIST=100000
+export INTERACTIVE_FILTER="fzy"
 # rootは履歴を残さないようにする
 if [ $UID = 0 ]; then
   unset HISTFILE
   SAVEHIST=0
 fi
-# 履歴検索
-autoload history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-bindkey "^P" history-beginning-search-backward-end
-bindkey "^N" history-beginning-search-forward-end
-# 履歴を複数の端末で共有する
-setopt share_history
-# 直前と同じコマンドの場合は履歴に追加しない
-setopt hist_ignore_dups
-# 重複するコマンドは古い法を削除する
-setopt hist_ignore_all_dups
-# 履歴ファイルにzsh の開始・終了時刻を記録する
-setopt extended_history
-# 先頭がスペースで始まる場合は履歴に追加しない
-setopt hist_ignore_space
-# 補完候補もLS_COLORSに合わせて色が付くようにする
-#zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-setopt auto_param_slash      # ディレクトリ名の補完で末尾の / を自動的に付加し、次の補完に備える
-setopt mark_dirs             # ファイル名の展開でディレクトリにマッチした場合 末尾に / を付加
-setopt list_types            # 補完候補一覧でファイルの種別を識別マーク表示 (訳注:ls -F の記号)
-setopt auto_menu             # 補完キー連打で順に補完候補を自動で補完
-setopt auto_param_keys       # カッコの対応などを自動的に補完
-setopt interactive_comments  # コマンドラインでも # 以降をコメントと見なす
-setopt magic_equal_subst     # コマンドラインの引数で --prefix=/usr などの = 以降でも補完できる
-
-setopt complete_in_word      # 語の途中でもカーソル位置で補完
-setopt always_last_prompt    # カーソル位置は保持したままファイル名一覧を順次その場で表示
-
-setopt print_eight_bit  #日本語ファイル名等8ビットを通す
-setopt extended_glob  # 拡張グロブで補完(~とか^とか。例えばless *.tx)
-# manの補完をセクション番号別に表示させる
-zstyle ':completion:*:manuals' separate-sections true
-# 変数の添字を補完する
-zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
-# apt-getとかdpkgコマンドをキャッシュを使って速くする
-zstyle ':completion:*' use-cache true
-#cd は親ディレクトリからカレントディレクトリを選択しないので表示させないようにする (例: cd ../<TAB>):
-zstyle ':completion:*:cd:*' ignore-parents parent pwd
-
-EMOJI_CLI_KEYBIND="^f"
-
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
-
-# anyfame
-zstyle ":anyframe:selector:" use fzf
-zstyle ":anyframe:selector:fzf:" command 'fzf --extended'
-bindkey '^xr' anyframe-widget-put-history
-bindkey '^xk' anyframe-widget-kill
-bindkey '^xt' anyframe-widget-tmux-attach
-
-# completiong
-zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-
-autoload -Uz compinit && compinit
-
-# Add <TAB> completion handlers for fzf *after* fzf is loaded
-_fzf_complete_z() {
-  _fzf_complete '--multi --reverse' "$@" < <(raw_z)
-}
-
-# fzf
-
-
-export FZF_DEFAULT_OPTS='
-  --color fg:242,bg:236,hl:65,fg+:15,bg+:239,hl+:108
-  --color info:108,prompt:109,spinner:108,pointer:168,marker:168
-'
-
-# vf - fuzzy open with vim from anywhere
-vf() {
-  local files
-
-  files=(${(f)"$(locate -i -0 $@ | grep -z -vE '~$' | fzf --read0 -0 -1 -m)"})
-
-  if [[ -n $files ]]
-  then
-    vim -- $files
-    print -l $files[1]
-  fi
-}
-
-# fo - open
-#   - CTRL-O to open with `open` command,
-#   - CTRL-E or Enter key to open with the $EDITOR
-fo() {
-  local out file key
-  out=$(fzf --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
-  key=$(head -1 <<< "$out")
-  file=$(head -2 <<< "$out" | tail -1)
-  if [ -n "$file" ]; then
-    [ "$key" = ctrl-o ] && open "$file" || ${EDITOR:-vim} "$file"
-      fi
-}
-
-# fd - cd to selected directory
-fd() {
-  local dir
-  dir=$(find ${1:-.} -path '*/\.*' -prune \
-        -o -type d -print 2> /dev/null | fzf +m) &&
-  cd "$dir"
-}
-
-# fda - including hidden directories
-fda() {
-  local dir
-  dir=$(find ${1:-.} -type d 2> /dev/null | fzf +m) && cd "$dir"
-}
-
-# fkill - kill process
-fkill() {
-  pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
-
-  if [ "x$pid" != "x" ]
-  then
-    kill -${1:-9} $pid
-  fi
-}
-
-# fs [FUZZY PATTERN] - Select selected tmux session
-#   - Bypass fuzzy finder if there's only one match (--select-1)
-#   - Exit if there's no match (--exit-0)
-fs() {
-  local session
-  session=$(tmux list-sessions -F "#{session_name}" | \
-    fzf --query="$1" --select-1 --exit-0) &&
-  tmux switch-client -t "$session"
-}
-
 ################
 # zplug
 ################
@@ -291,25 +121,112 @@ if ! zplug check --verbose; then
   zplug install
 fi
 
+###############
+# zsh-history-substring-search
+###############
+if zplug check "zsh-users/zsh-history-substring-search"; then
+  bindkey "$terminfo[kcuu1]" history-substring-search-up
+  bindkey "$terminfo[kcud1]" history-substring-search-down
+fi
+
+##############
+# zstyle
+##############
+# Important
+zstyle ':completion:*:default' menu select=2
+# Completing Groping
+zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'
+zstyle ':completion:*' group-name ''
+# Completing misc
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
+zstyle ':completion:*:*files' ignored-patterns '*?.o' '*?~' '*\#'
+zstyle ':completion:*' use-cache true
+zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
+# Directory
+zstyle ':completion:*:cd:*' ignore-parents parent pwd
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# default: --
+zstyle ':completion:*' list-separator '-->'
+zstyle ':completion:*:manuals' separate-sections true
+# Menu select
+zmodload -i zsh/complist
+bindkey -M menuselect '^h' vi-backward-char
+bindkey -M menuselect '^j' vi-down-line-or-history
+bindkey -M menuselect '^k' vi-up-line-or-history
+bindkey -M menuselect '^l' vi-forward-char
+#bindkey -M menuselect '^k' accept-and-infer-next-history
+autoload -Uz cdr
+autoload -Uz history-search-end
+autoload -Uz modify-current-argument
+autoload -Uz smart-insert-last-word
+autoload -Uz terminfo
+autoload -Uz vcs_info
+autoload -Uz zcalc
+autoload -Uz zmv
+autoload -Uz run-help-git
+autoload -Uz run-help-svk
+autoload -Uz run-help-svn
+autoload -Uz add-zsh-hook
+autoload -Uz colors && colors
+autoload -Uz compinit && compinit -u
+autoload -Uz is-at-least
 
 
 ###############
-# function
+# zsh-enhanced
 ###############
-function myip {
-  ifconfig lo0 | grep 'inet ' | sed -e 's/:/ /' | awk '{print "lo0 : " $2}'
-  ifconfig en0 | grep 'inet ' | sed -e 's/:/ /' | awk '{print "en0 (IPv4): " $2 " " $3 " " $4 " " $5 " " $6}'
-  ifconfig en0 | grep 'inet6 ' | sed -e 's/ / /' | awk '{print "en0 (IPv6): " $2 " " $3 " " $4 " " $5 " " $6}'
-  ifconfig en1 | grep 'inet ' | sed -e 's/:/ /' | awk '{print "en1 (IPv4): " $2 " " $3 " " $4 " " $5 " " $6}'
-  ifconfig en1 | grep 'inet6 ' | sed -e 's/ / /' | awk '{print "en1 (IPv6): " $2 " " $3 " " $4 " " $5 " " $6}'
-}
+export ENHANCD_COMMAND=cd
+export ENHANCD_FILTER=fzy:fzf:peco
 
-function update_zplug {
-  echo '———> Updating zplug...';
-  zplug update --self
-  echo '———> Updating zplug packages...';
-  zplug update
-}
+###############
+# zsh-history-enhanced
+###############
+if zplug check "b4b4r07/zsh-history-enhanced"; then
+  export ZSH_HISTORY_FILE="$HOME/.zsh_history.db"
+  ZSH_HISTORY_FILTER="fzy:fzf:peco:percol"
+  ZSH_HISTORY_KEYBIND_GET_BY_DIR="^r"
+  ZSH_HISTORY_KEYBIND_GET_ALL="^r^a"
+  ZSH_HISTORY_KEYBIND_ARROW_UP="^p"
+  ZSH_HISTORY_KEYBIND_ARROW_DOWN="^n"
+fi
+
+###############
+# ls less 
+###############
+export CLICOLOR=1
+export LSCOLORS=exfxcxdxbxegedabagacad
+export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[00;44;37m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+export LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
+export LESSCHARSET='utf-8'
+
+###############
+# editor
+###############
+export EDITOR=vim
+export CVSEDITOR="${EDITOR}"
+export SVN_EDITOR="${EDITOR}"
+export GIT_EDITOR="${EDITOR}"
+
+###############
+# LANGUAGE
+###############
+export LANGUAGE="en_US.UTF-8"
+export LANG="${LANGUAGE}"
+export LC_ALL="${LANGUAGE}"
+export LC_CTYPE="${LANGUAGE}"
+
+
 ################
 # system
 ################
@@ -318,21 +235,6 @@ export PATH="/usr/local/bin:/usr/local/lib:/usr/bin:/bin:/usr/sbin:/sbin"
 export TERM="xterm-256color"
 export XDG_CONFIG_HOME="$HOME/.config"
 
-# ls color
-if ls --color -d . >/dev/null 2>&1; then
-  alias ls='ls --color=auto'
-#  export LSCOLORS=xbfxcxdxbxegedabagacad
-#  alias ls='ls -G --color=auto'
-# else # OS X `ls`
-elif ls -G -d . >/dev/null 2>&1; then
-  alias ls='ls -G'
-#  eval `dircolors ~/.colorrc`
-#  alias ls='ls --color=auto'
-fi
-
-GREP_OPTIONS="--color=auto --binary-files=without-match"
-alias grep="grep $GREP_OPTIONS"
-unset GREP_OPTIONS
 alias vi=vim
 
 function loadlib() {
