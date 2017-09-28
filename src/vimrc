@@ -9,20 +9,13 @@
 ""    [unite]m Unite file_mru
 "" <Leader>r (quickrun)
 "" <Leader>o :OverCommandLine
-"" <Leader>u :UndotreeToggle
+"" <Leader>U :treeToggle
 "" <Leader>N :NERDTreeToggle
 "" <Leader>E :srcexpl
 "" <leader>T :TagbarToggle
 "" <Leader>A : NERD + SRCEXPL + TAGBAR
 "" <ENTER> wildfire_fuel_map
-"" S <Plug>(easymotion-sn)
-"" <Leader>f <Plug>(easymotion-bd-W)
-"" <Leader>x [ref]
-""    [ref]j :Ref webdict je
-""    [ref]e :Ref webdict ej
-""    [ref]w :Ref webdict wikipedia
-""    [ref]m :Ref man
-""
+"" m <Plug>(easymotion-sn)
 ""
 "" :Doxy
 "" :GrammerCheck
@@ -101,8 +94,6 @@ if s:use_dein && v:version >= 704
         \ 'depends': ['neocomplete.vim']})
     endif
 
-    " waketime
-    call dein#add('wakatime/vim-wakatime')
 
     " Snippet
     call dein#add('Shougo/neosnippet')
@@ -214,9 +205,13 @@ if s:use_dein && v:version >= 704
 
     call dein#add('junegunn/seoul256.vim')
 
+    call dein#add('vim-scripts/bufferlist.vim')
+
     call dein#add('cohama/lexima.vim')
 
-    call dein#add('vim-scripts/bufferlist.vim')
+    call dein#add('ConradIrwin/vim-bracketed-paste')
+
+    call dein#add('fatih/vim-go')
 
     call dein#end()
 
@@ -641,7 +636,7 @@ endif
 
 " {{{ undotree
 if s:dein_enabled && dein#tap("undotree")
-  nmap <Leader>u :UndotreeToggle<CR>
+  nmap <Leader>U :UndotreeToggle<CR>
   let g:undotree_SetFocusWhenToggle = 1
   let g:undotree_WindowLayout = 'topleft'
   let g:undotree_SplitWidth = 35
@@ -838,7 +833,7 @@ if s:dein_enabled && dein#tap("vim-easymotion")
   hi EasyMotionShade  ctermbg=none ctermfg=blue
 
   map S <Plug>(easymotion-sn)
-  map <Leader>f <Plug>(easymotion-bd-W)
+  map <Leader>m <Plug>(easymotion-bd-W)
   "nmap <Leader>f <Plug>(easymotion-overwin-w)
 endif
 " }}} vim-easymotion
@@ -936,3 +931,18 @@ map <silent> <C-b> :call BufferList()<CR>
 " }}} Plugin settings
 
 set noautochdir
+
+" golang
+let g:go_bin_path = $GOPATH.'/bin'
+filetype plugin indent on
+let g:go_hightlight_functions = 1  
+let g:go_hightlight_methods = 1  
+let g:go_hightlight_structs = 1  
+let g:go_hightlight_interfaces = 1  
+let g:go_hightlight_operators = 1  
+let g:go_hightlight_build_constraints = 1
+let g:go_fmt_command = "goimports"
+if !exists('g:neocomplete#force_omni_input_patterns')
+        let g:neocomplete#force_omni_input_patterns = {}
+endif
+let g:neocomplete#force_omni_input_patterns.go = '[^.[:digit:] *\t]\.'
