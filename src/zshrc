@@ -188,8 +188,7 @@ export ENHANCD_FILTER=fzy
 ###############
 # zsh-history-enhanced
 ###############
-#if zplug check "b4b4r07/zsh-history-enhanced"; then
-if zplug check "b4b4r07/history"; then
+if zplug check "b4b4r07/zsh-history-enhanced"; then
   export ZSH_HISTORY_FILE="$HOME/.zsh_history.db"
   bindkey -r '^j' # Ctrl-j
   bindkey -r '^J' # Ctrl-j
