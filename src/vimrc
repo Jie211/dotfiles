@@ -313,29 +313,8 @@ nmap <silent> <Esc><Esc> :nohlsearch<CR>
 " ##########################
 " 前回編集していた場所にカーソルを移動させる
 "######################
-" au BufWritePost * mkview
-" autocmd BufReadPost * loadview
-function! s:is_view_available() abort " {{{
-  if !&buflisted || &buftype !=# ''
-    return 0
-  elseif !filewritable(expand('%:p'))
-    return 0
-  endif
-  return 1
-endfunction " }}}
-function! s:mkview() abort " {{{
-  if s:is_view_available()
-    silent! mkview
-  endif
-endfunction " }}}
-function! s:loadview() abort " {{{
-  if s:is_view_available()
-    silent! loadview
-  endif
-endfunction " }}}
-autocmd MyAutoCmd BufWinLeave ?* call s:mkview()
-autocmd MyAutoCmd BufReadPost ?* call s:loadview()
-
+au BufWritePost * mkview
+autocmd BufReadPost * loadview
 
 "######################
 " 全角スペースの表示
@@ -821,7 +800,7 @@ if s:dein_enabled && dein#tap("auto-ctags.vim")
   if has('path_extra')
           set tags+=tags;
   endif
-  let g:auto_ctags = 1
+  " let g:auto_ctags = 1
   let g:auto_ctags_filetype_mode = 1
   let g:auto_ctags_directory_list = ['.git', '.svn', './']
   let g:auto_ctags_tags_args = '--sort=foldcase -R'
