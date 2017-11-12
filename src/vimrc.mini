@@ -1,0 +1,141 @@
+" vimrc
+
+"######################
+"encode
+"######################
+set enc=utf-8
+set helplang=ja
+set fileencodings=utf-8,iso-2022-jp,cp932,euc-jp,default,latin
+syntax on
+if &term =~ '256color'
+" disable Background Color Erase (BCE) so that color schemes
+" render properly when inside 256-color tmux and GNU screen.
+" see also http://snk.tuxfamily.org/log/vim-256color-bce.html
+set t_ut=
+endif
+
+"######################
+"display
+"######################
+set number "line number
+let &titleold=expand("%:p:h")
+set title
+set showmode
+set title
+set ruler
+set showcmd
+set matchtime=3
+set laststatus=2
+set background=dark
+
+" let g:seoul256_background = 233
+" colo seoul256
+" set termguicolors
+" let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+" let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+
+"######################
+"for Programming
+"######################
+set infercase
+set backspace=indent,eol,start
+set nocompatible
+set smartindent
+set autoindent
+set expandtab
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set whichwrap=b,s,h,l,<,>,[,]
+set scrolloff=8
+set sidescrolloff=16
+set sidescroll=1
+set cursorline
+set showmatch
+set matchtime=3
+set novisualbell
+set list
+set listchars=tab:>.,trail:_,eol:↲,extends:>,precedes:<,nbsp:%
+set confirm
+set hlsearch
+set ignorecase
+set smartcase
+set wrapscan
+set wildmenu wildmode=list:longest,full
+
+" ##########################
+" nohlsearch
+"######################
+nmap <silent> <Esc><Esc> :nohlsearch<CR>
+
+" ##########################
+"######################
+au BufWritePost * mkview
+autocmd BufReadPost * loadview
+
+"######################
+"######################
+function! ZenkakuSpace()
+  highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
+endfunction
+
+if has('syntax')
+  augroup ZenkakuSpace
+    autocmd!
+    autocmd ColorScheme * call ZenkakuSpace()
+    autocmd VimEnter,WinEnter,BufRead * let w:m1=matchadd('ZenkakuSpace', '　')
+  augroup END
+  call ZenkakuSpace()
+endif
+
+"##################
+"include guard
+"###################"
+command!  -nargs=0 IncGuard call IncludeGuard()
+function! IncludeGuard()
+  let name = fnamemodify(expand('%'),':t')
+
+  let name = toupper(name)
+
+  let included = substitute(name,'\.','_','g').'_INCLUDED__'
+
+  let res_head = '#ifndef '.included."\n#define ".included."\n\n"
+  let res_foot = "\n".'#endif //'.included."\n"
+  silent! execute '1s/^/\=res_head'
+  silent! execute '$s/$/\=res_foot'
+endfunction
+
+"#######################
+"######################
+nnoremap s <Nop>
+nnoremap sj <C-w>j
+nnoremap sk <C-w>k
+nnoremap sl <C-w>l
+nnoremap sh <C-w>h
+nnoremap sJ <C-w>J
+nnoremap sK <C-w>K
+nnoremap sL <C-w>L
+nnoremap sH <C-w>H
+nnoremap sn gt
+nnoremap sp gT
+nnoremap sr <C-w>r
+nnoremap s= <C-w>=
+nnoremap sw <C-w>w
+nnoremap so <C-w>_<C-w>|
+nnoremap sO <C-w>=
+nnoremap sN :<C-u>bn<CR>
+nnoremap sP :<C-u>bp<CR>
+nnoremap st :<C-u>tabnew<CR>
+nnoremap ss :<C-u>sp<CR>
+nnoremap sv :<C-u>vs<CR>
+nnoremap sq :<C-u>q<CR>
+nnoremap sQ :<C-u>bd<CR>
+
+" Open vimrc
+nnoremap <Leader><Leader> :tabedit $MYVIMRC<CR>
+
+" Source vimrc
+nnoremap <Leader>. :source $MYVIMRC<CR>
+
+" }}} Basic settings
