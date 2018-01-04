@@ -4,7 +4,6 @@ if [[ ! -d ~/.zplug ]]; then
   echo "zplug is not installed in this machine."
   echo "Installing zplug..."
   echo ""
-  read "ZPLUG_SUDO_PASSWORD?## Need you sudo pw to install fzy, so input your sudo pw: "
   git clone https://github.com/zplug/zplug ~/.zplug
   source ~/.zplug/init.zsh && zplug update
 fi
@@ -20,7 +19,7 @@ source ~/.zplug/init.zsh
 
 zplug "yous/vanilli.sh"
 
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
+zplug "zdharma/fast-syntax-highlighting", defer:2
 
 zplug "b4b4r07/zsh-vimode-visual", use:"*.zsh", defer:3
 
@@ -34,9 +33,13 @@ zplug "Valodim/zsh-curl-completion"
 
 zplug "plugins/git", from:oh-my-zsh
 
-zplug "jhawthorn/fzy", \
-  as:command, \
-  hook-build:"make && sudo make install"
+zplug "junegunn/fzf-bin", \
+        from:gh-r, \
+        as:command, \
+        rename-to:fzf
+
+zplug "junegunn/fzf", \
+        use:"shell/key-bindings.zsh"
 
 zplug "monochromegane/the_platinum_searcher", \
   as:command, \
@@ -106,12 +109,9 @@ setopt pushd_ignore_dups
 
 # 履歴ファイルの保存先
 export HISTFILE=${HOME}/.zsh_history
-# メモリ上に保存される件数（検索できる件数）
 HISTSIZE=100000
-# ファイルに保存される件数
 SAVEHIST=100000
-export INTERACTIVE_FILTER="fzy"
-# rootは履歴を残さないようにする
+export INTERACTIVE_FILTER="fzf"
 if [ $UID = 0 ]; then
   unset HISTFILE
   SAVEHIST=0
@@ -121,16 +121,8 @@ fi
 ################
 
 # Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
+if ! zplug check; then
   zplug install
-fi
-
-###############
-# zsh-history-substring-search
-###############
-if zplug check "zsh-users/zsh-history-substring-search"; then
-  bindkey "$terminfo[kcuu1]" history-substring-search-up
-  bindkey "$terminfo[kcud1]" history-substring-search-down
 fi
 
 ##############
@@ -183,21 +175,7 @@ autoload -Uz is-at-least
 # zsh-enhanced
 ###############
 export ENHANCD_COMMAND=cd
-export ENHANCD_FILTER=fzy
-
-###############
-# zsh-history-enhanced
-###############
-if zplug check "b4b4r07/zsh-history-enhanced"; then
-  export ZSH_HISTORY_FILE="$HOME/.zsh_history.db"
-  bindkey -r '^j' # Ctrl-j
-  bindkey -r '^J' # Ctrl-j
-  ZSH_HISTORY_FILTER="fzy"
-  ZSH_HISTORY_KEYBIND_GET_BY_DIR="^r"
-  ZSH_HISTORY_KEYBIND_GET_ALL="^r^a"
-  ZSH_HISTORY_KEYBIND_ARROW_UP="^p"
-  ZSH_HISTORY_KEYBIND_ARROW_DOWN="^n"
-fi
+export ENHANCD_FILTER=fzf
 
 ###############
 # ls less 
@@ -215,6 +193,7 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 export LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
 export LESSCHARSET='utf-8'
+
 
 ###############
 # editor
@@ -237,7 +216,7 @@ export LC_CTYPE="${LANGUAGE}"
 # system
 ################
 
-export PATH="/usr/local/bin:/usr/local/lib:/usr/bin:/bin:/usr/sbin:/sbin"
+export PATH="/usr/local/bin:/usr/local/lib:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.zplug/bin"
 export TERM="xterm-256color"
 export XDG_CONFIG_HOME="$HOME/.config"
 
@@ -250,27 +229,7 @@ function loadlib() {
   fi
 }
 
-# $1 = type; 0 - both, 1 - tab, 2 - title
-# rest = text
-setTerminalText () {
-    # echo works in bash & zsh
-    local mode=$1 ; shift
-    echo -ne "\033]$mode;$@\007"
-}
-stt_both  () { setTerminalText 0 $@; }
-stt_tab   () { setTerminalText 1 $@; }
-stt_title () { setTerminalText 2 $@; }
-
-preexec() {
-    mycmd=(${(s: :)${1}})
-    echo -ne "\ek$(hostname|awk 'BEGIN{FS="."}{print $1}'):$mycmd[1]\e\\"
-}
-
-precmd() {
-    echo -ne "\ek$(hostname|awk 'BEGIN{FS="."}{print $1}'):(-.-)Zzz\e\\"
-}
-
 
 loadlib ~/.zsh-local
 
-zplug load --verbose
+zplug load
