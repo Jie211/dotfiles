@@ -1,0 +1,114 @@
+################
+# key bind
+################
+# Vim-like keybind as default
+bindkey -v
+
+# unset ctrl-j
+bindkey -r '^j' # Ctrl-j
+bindkey -r '^J' # Ctrl-j
+# Vim-like escaping jj keybind
+bindkey -M viins 'jj' vi-cmd-mode
+# Add emacs-like keybind to viins mode
+bindkey -M viins '^F'  forward-char
+bindkey -M viins '^B'  backward-char
+bindkey -M viins '^A'  beginning-of-line
+bindkey -M viins '^E'  end-of-line
+bindkey -M viins '^K'  kill-line
+bindkey -M viins '^Y'  yank
+bindkey -M viins '^W'  backward-kill-word
+bindkey -M viins '^U'  backward-kill-line
+bindkey -M viins '^H'  backward-delete-char
+bindkey -M viins '^?'  backward-delete-char
+bindkey -M viins '^G'  send-break
+bindkey -M viins '^D'  delete-char-or-list
+bindkey -M vicmd '^A'  beginning-of-line
+bindkey -M vicmd '^E'  end-of-line
+bindkey -M vicmd '^K'  kill-line
+bindkey -M vicmd '^P'  up-line-or-history
+bindkey -M vicmd '^N'  down-line-or-history
+bindkey -M vicmd '^Y'  yank
+bindkey -M vicmd '^W'  backward-kill-word
+bindkey -M vicmd '^U'  backward-kill-line
+bindkey -M vicmd '/'   vi-history-search-forward
+bindkey -M vicmd '?'   vi-history-search-backward
+bindkey -M vicmd 'gg' beginning-of-line
+bindkey -M vicmd 'G'  end-of-line
+setopt pushd_ignore_dups
+
+export HISTFILE=${HOME}/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+export INTERACTIVE_FILTER="fzy"
+if [ $UID = 0 ]; then
+  unset HISTFILE
+  SAVEHIST=0
+fi
+autoload -Uz cdr
+autoload -Uz history-search-end
+autoload -Uz modify-current-argument
+autoload -Uz smart-insert-last-word
+autoload -Uz terminfo
+autoload -Uz vcs_info
+autoload -Uz zcalc
+autoload -Uz zmv
+autoload -Uz run-help-git
+autoload -Uz run-help-svk
+autoload -Uz run-help-svn
+autoload -Uz add-zsh-hook
+autoload -Uz colors && colors
+autoload -Uz compinit && compinit -u
+autoload -Uz is-at-least
+
+
+###############
+# ls less 
+###############
+export CLICOLOR=1
+export LSCOLORS=exfxcxdxbxegedabagacad
+export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[00;44;37m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+export LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
+export LESSCHARSET='utf-8'
+
+###############
+# editor
+###############
+export EDITOR=vim
+export CVSEDITOR="${EDITOR}"
+export SVN_EDITOR="${EDITOR}"
+export GIT_EDITOR="${EDITOR}"
+
+###############
+# LANGUAGE
+###############
+export LANGUAGE="en_US.UTF-8"
+export LANG="${LANGUAGE}"
+export LC_ALL="${LANGUAGE}"
+export LC_CTYPE="${LANGUAGE}"
+
+################
+# system
+################
+
+export PATH="/usr/local/bin:/usr/local/lib:/usr/bin:/bin:/usr/sbin:/sbin"
+export TERM="xterm-256color"
+export XDG_CONFIG_HOME="$HOME/.config"
+
+alias vi=vim
+
+function loadlib() {
+  lib=${1:?"You have to specify a library file"}
+  if [ -f "$lib" ];then
+    . "$lib"
+  fi
+}
+
+loadlib ~/.zsh-local
